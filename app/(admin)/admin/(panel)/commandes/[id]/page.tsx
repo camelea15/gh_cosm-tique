@@ -7,7 +7,8 @@ import { requireAdmin } from "@/lib/auth";
 import { query } from "@/lib/db";
 import { DELIVERY_LABEL, STATUSES, STATUS_LABEL, da, formatDateTime } from "@/lib/admin-format";
 import { displayPhone, phoneToIntl } from "@/lib/format";
-import { updateOrderAction } from "./actions";
+import { DeleteOrderForm } from "@/components/admin/delete-order-button";
+import { deleteOrderAction, updateOrderAction } from "./actions";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Détail de la commande" };
@@ -217,6 +218,12 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
             </div>
             <SubmitButton className="btn btn-primary min-h-11 w-full">Enregistrer</SubmitButton>
           </form>
+          {order.status === "annulee" && (
+            <div className="mt-6 border-t border-line pt-6">
+              <p className="mb-3 text-xs text-muted">Commande annulée (ex. test) : vous pouvez l&apos;effacer de la liste.</p>
+              <DeleteOrderForm action={deleteOrderAction.bind(null, order.id)} />
+            </div>
+          )}
           <p className="mt-4 text-xs text-muted">Dernière mise à jour : {formatDateTime(order.updated_at)}</p>
         </aside>
       </div>
