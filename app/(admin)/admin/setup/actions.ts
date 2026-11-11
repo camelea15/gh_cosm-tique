@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { audit, createSession, currentIpHash, hashPassword, passwordProblem } from "@/lib/auth";
 import { query } from "@/lib/db";
+import { normalizeEmail } from "@/lib/email";
 import { rateLimit } from "@/lib/security";
 
 export type FormState = { error?: string } | undefined;
@@ -26,7 +27,7 @@ export async function setupAction(_prev: FormState, formData: FormData): Promise
   }
 
   const token = String(formData.get("token") ?? "");
-  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  const email = normalizeEmail(String(formData.get("email") ?? "").slice(0, 200));
   const password = String(formData.get("password") ?? "");
   const confirm = String(formData.get("confirm") ?? "");
 

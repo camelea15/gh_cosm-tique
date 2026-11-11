@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { audit, createSession, currentIpHash, verifyPassword } from "@/lib/auth";
 import { query } from "@/lib/db";
+import { normalizeEmail } from "@/lib/email";
 import { rateLimit } from "@/lib/security";
 
 export type FormState = { error?: string } | undefined;
@@ -11,7 +12,7 @@ const MAX_ATTEMPTS = 5;
 const LOCK_MINUTES = 15;
 
 export async function loginAction(_prev: FormState, formData: FormData): Promise<FormState> {
-  const email = String(formData.get("email") ?? "").trim().toLowerCase().slice(0, 200);
+  const email = normalizeEmail(String(formData.get("email") ?? "").slice(0, 200));
   const password = String(formData.get("password") ?? "").slice(0, 200);
   const generic = "Identifiants incorrects ou compte temporairement bloqué.";
 
