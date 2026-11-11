@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+@theme {
+  /* Palette tirée du logo : rose profond, rose vif, rose doux, sur fond blanc. */
+  --color-brand-50: #fff6fa;
+  --color-brand-100: #fde8f1;
+  --color-brand-200: #fbcfe1;
+  --color-brand-300: #f8a6c6;
+  --color-brand-400: #ef6fa2;
+  --color-brand-500: #e03878;
+  --color-brand-600: #c82060;
+  --color-brand-700: #a8174f;
+  --color-brand-800: #7e1139;
+  --color-brand-900: #560b27;
+  --color-ink: #2b1520;
+  --color-muted: #6f5a64;
+  --color-line: #f3dbe6;
+
+  --font-sans: "Inter Variable", "Cairo Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Playfair Display Variable", "Cairo Variable", ui-serif, Georgia, serif;
+
+  --shadow-soft: 0 1px 2px rgb(86 11 39 / 0.04), 0 8px 24px -8px rgb(168 23 79 / 0.14);
+  --shadow-lift: 0 2px 4px rgb(86 11 39 / 0.05), 0 18px 40px -12px rgb(168 23 79 / 0.28);
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: #fff;
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* En arabe : police Cairo partout (titres compris), interlignage un peu plus large. */
+[dir="rtl"] body {
+  font-family: "Cairo Variable", ui-sans-serif, system-ui, sans-serif;
+  line-height: 1.8;
+}
+[dir="rtl"] .font-display {
+  font-family: "Cairo Variable", ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: 0;
+}
+
+::selection {
+  background: var(--color-brand-200);
+  color: var(--color-brand-900);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-brand-600);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+  .btn {
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-6 text-sm font-semibold transition duration-200 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    @apply bg-brand-600 text-white shadow-soft hover:bg-brand-700 active:scale-[0.98];
+  }
+  .btn-outline {
+    @apply border border-brand-300 bg-white text-brand-700 hover:border-brand-500 hover:bg-brand-50;
+  }
+  .btn-ghost {
+    @apply text-brand-700 hover:bg-brand-50;
+  }
+  .field {
+    @apply block w-full rounded-xl border border-line bg-white px-4 py-3 text-base text-ink shadow-sm placeholder:text-muted/60 focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200;
+  }
+  .field[aria-invalid="true"] {
+    @apply border-red-500 focus:ring-red-200;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-ink;
+  }
+  .card {
+    @apply rounded-2xl border border-line bg-white shadow-soft;
+  }
+  .eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.18em] text-brand-600;
+  }
+}
