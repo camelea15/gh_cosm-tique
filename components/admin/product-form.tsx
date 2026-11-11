@@ -14,6 +14,7 @@ export type ProductFormValues = {
   price_wholesale: string;
   stock: string;
   image_url: string;
+  extra_images: string;
   sort_order: string;
   is_active: boolean;
 };
@@ -153,6 +154,23 @@ export function ProductForm({
         />
         <p className="mt-1.5 text-xs text-muted">Chemin d&apos;une photo du site (ex. /products/serum-vitamine-c.webp) ou lien https://.</p>
         <Err k="image_url" />
+      </div>
+
+      <div>
+        <label htmlFor="extra_images" className="label">
+          Photos supplémentaires (facultatif)
+        </label>
+        <textarea
+          id="extra_images"
+          name="extra_images"
+          defaultValue={values.extra_images}
+          rows={3}
+          placeholder={"/products/nom-du-produit-2.webp"}
+          className="field resize-y"
+          dir="ltr"
+        />
+        <p className="mt-1.5 text-xs text-muted">Une photo par ligne (5 maximum). Elles s&apos;affichent sous la photo principale sur la fiche produit.</p>
+        <Err k="extra_images" />
       </div>
 
       <div className="flex justify-end">

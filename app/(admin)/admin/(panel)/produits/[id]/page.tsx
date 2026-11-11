@@ -20,6 +20,7 @@ type P = {
   price_wholesale: number;
   stock: number | null;
   image_url: string | null;
+  extra_images: string[];
   sort_order: number;
   is_active: boolean;
 };
@@ -40,7 +41,7 @@ export default async function EditProductPage({
   const [rows, categories] = await Promise.all([
     query<P>(
       `SELECT id, slug, name_fr, name_ar, description_fr, description_ar, category_id, price_retail, price_wholesale,
-              stock, image_url, sort_order, is_active FROM products WHERE id = $1`,
+              stock, image_url, extra_images, sort_order, is_active FROM products WHERE id = $1`,
       [id],
     ),
     query<{ id: number; name_fr: string }>(`SELECT id, name_fr FROM categories ORDER BY sort_order, id`),
@@ -74,6 +75,7 @@ export default async function EditProductPage({
             price_wholesale: String(p.price_wholesale),
             stock: p.stock === null ? "" : String(p.stock),
             image_url: p.image_url ?? "",
+            extra_images: (p.extra_images ?? []).join("\n"),
             sort_order: String(p.sort_order),
             is_active: p.is_active,
           }}

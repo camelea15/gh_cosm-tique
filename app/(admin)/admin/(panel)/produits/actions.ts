@@ -36,6 +36,17 @@ const schema = z.object({
   image_url: clean(500).refine((v) => v === "" || /^\/products\/[A-Za-z0-9._\-/]{1,200}$/.test(v) || /^https:\/\/\S{4,480}$/.test(v), {
     message: "Entrez un chemin comme /products/nom.webp ou un lien https://",
   }),
+  extra_images: z
+    .string()
+    .max(2500)
+    .transform((v) => [...new Set(v.split(/\r?\n/).map((l) => l.trim()).filter(Boolean))])
+    .pipe(
+      z
+        .array(z.string().refine((u) => /^\/products\/[A-Za-z0-9._\-/]{1,200}$/.test(u) || /^https:\/\/\S{4,480}$/.test(u), {
+          message: "Chaque ligne doit être un chemin /products/nom.webp ou un lien https://",
+        }))
+        .max(5, "5 photos supplémentaires maximum"),
+    ),
   sort_order: intField(0, 100000),
 });
 
@@ -63,7 +74,7 @@ export async function saveProductAction(id: number | null, _prev: ProductFormSta
   const admin = await requireAdmin();
 
   const raw = Object.fromEntries(
-    ["name_fr", "name_ar", "description_fr", "description_ar", "category_id", "price_retail", "price_wholesale", "stock", "image_url", "sort_order"].map(
+    ["name_fr", "name_ar", "description_fr", "description_ar", "category_id", "price_retail", "price_wholesale", "stock", "image_url", "extra_images", "sort_order"].map(
       (k) => [k, String(formData.get(k) ?? "")],
     ),
   );
@@ -87,10 +98,10 @@ export async function saveProductAction(id: number | null, _prev: ProductFormSta
     const slug = await uniqueSlug(slugify(v.name_fr));
     const rows = await query<{ id: number }>(
       `INSERT INTO products (slug, name_fr, name_ar, description_fr, description_ar, category_id, price_retail, price_wholesale,
-                             image_url, stock, is_active, sort_order)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12) RETURNING id`,
+                             image_url, stock, is_active, sort_order, extra_images)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING id`,
       [slug, v.name_fr, v.name_ar || null, v.description_fr || null, v.description_ar || null, categoryId, v.price_retail,
-       v.price_wholesale, v.image_url || null, stock, isActive, v.sort_order],
+       v.price_wholesale, v.image_url || null, stock, isActive, v.sort_order, v.extra_images],
     );
     await audit(admin.id, "product_create", `${rows[0].id} ${v.name_fr}`);
     revalidateTag(CATALOG_TAG);
@@ -100,10 +111,10 @@ export async function saveProductAction(id: number | null, _prev: ProductFormSta
 
   const updated = await query(
     `UPDATE products SET name_fr=$2, name_ar=$3, description_fr=$4, description_ar=$5, category_id=$6, price_retail=$7,
-            price_wholesale=$8, image_url=$9, stock=$10, is_active=$11, sort_order=$12, updated_at=now()
+            price_wholesale=$8, image_url=$9, stock=$10, is_active=$11, sort_order=$12, extra_images=$13, updated_at=now()
      WHERE id=$1 RETURNING id`,
     [id, v.name_fr, v.name_ar || null, v.description_fr || null, v.description_ar || null, categoryId, v.price_retail,
-     v.price_wholesale, v.image_url || null, stock, isActive, v.sort_order],
+     v.price_wholesale, v.image_url || null, stock, isActive, v.sort_order, v.extra_images],
   );
   if (updated.length === 0) return { error: "Produit introuvable." };
   await audit(admin.id, "product_update", `${id} ${v.name_fr}`);

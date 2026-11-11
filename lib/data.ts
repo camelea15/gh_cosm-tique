@@ -15,6 +15,7 @@ export type Product = {
   price_retail: number;
   price_wholesale: number;
   image_url: string | null;
+  extra_images: string[];
   stock: number | null;
   sort_order: number;
 };
@@ -41,7 +42,7 @@ export const getProducts = unstable_cache(
   async (): Promise<Product[]> =>
     query<Product>(
       `SELECT p.id, p.slug, p.name_fr, p.name_ar, p.description_fr, p.description_ar, p.category_id,
-              c.slug AS category_slug, p.price_retail, p.price_wholesale, p.image_url, p.stock, p.sort_order
+              c.slug AS category_slug, p.price_retail, p.price_wholesale, p.image_url, p.extra_images, p.stock, p.sort_order
        FROM products p LEFT JOIN categories c ON c.id = p.category_id
        WHERE p.is_active
        ORDER BY p.sort_order, p.id`,

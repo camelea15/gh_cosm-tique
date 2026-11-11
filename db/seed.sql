@@ -9,3 +9,4 @@ INSERT INTO wilayas (code,name_fr,name_ar,fee_stopdesk,fee_home) VALUES (1,'Adra
 
 -- Photos des produits (fichiers dans public/products/<slug>.webp)
 UPDATE products SET image_url = '/products/' || slug || '.webp';
+UPDATE products SET extra_images = ARRAY['/products/dr-althea-345-2.webp'] WHERE slug = 'dr-althea-345';

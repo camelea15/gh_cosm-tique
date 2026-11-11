@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Icon } from "@/components/icons";
 import { ProductCard } from "@/components/shop/product-card";
-import { ProductImage } from "@/components/shop/product-image";
+import { ProductGallery } from "@/components/shop/product-gallery";
 import { ProductPurchase } from "@/components/shop/product-detail";
 import { getCategories, getProductBySlug, getProducts } from "@/lib/data";
 import { formatDA } from "@/lib/format";
@@ -65,9 +65,11 @@ export default async function ProductPage({ params }: Props) {
       </nav>
 
       <div className="mt-6 grid gap-8 md:grid-cols-2 lg:gap-14">
-        <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-brand-50 shadow-soft ring-1 ring-line">
-          <ProductImage src={product.image_url} alt={name} sizes="(min-width: 768px) 50vw, 100vw" priority />
-        </div>
+        <ProductGallery
+          images={[product.image_url, ...(product.extra_images ?? [])].filter((x): x is string => !!x)}
+          alt={name}
+          sizes="(min-width: 768px) 50vw, 100vw"
+        />
 
         <div className="flex flex-col">
           {cat && (

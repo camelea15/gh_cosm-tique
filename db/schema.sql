@@ -20,6 +20,7 @@ CREATE TABLE products (
   price_retail INT NOT NULL CHECK (price_retail >= 0),
   price_wholesale INT NOT NULL CHECK (price_wholesale >= 0),
   image_url TEXT,
+  extra_images TEXT[] NOT NULL DEFAULT '{}',
   stock INT CHECK (stock IS NULL OR stock >= 0),
   is_active BOOLEAN NOT NULL DEFAULT TRUE,
   sort_order INT NOT NULL DEFAULT 0,

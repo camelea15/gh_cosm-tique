@@ -33,6 +33,7 @@ export default async function NewProductPage() {
             price_wholesale: "",
             stock: "",
             image_url: "",
+            extra_images: "",
             sort_order: String(max[0]?.n ?? 1),
             is_active: true,
           }}
