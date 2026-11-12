@@ -6,6 +6,7 @@ import { z } from "zod";
 import { audit, requireAdmin } from "@/lib/auth";
 import { CATALOG_TAG } from "@/lib/data";
 import { query } from "@/lib/db";
+import { IMAGE_URL_RE } from "@/lib/images";
 
 export type ProductFormState = { error?: string; fieldErrors?: Record<string, string>; ok?: boolean } | undefined;
 
@@ -33,7 +34,7 @@ const schema = z.object({
   price_retail: intField(0, 10_000_000),
   price_wholesale: intField(0, 10_000_000),
   stock: z.string().trim().regex(/^\d{0,9}$/, "Stock invalide"),
-  image_url: clean(500).refine((v) => v === "" || /^\/products\/[A-Za-z0-9._\-/]{1,200}$/.test(v) || /^https:\/\/\S{4,480}$/.test(v), {
+  image_url: clean(500).refine((v) => v === "" || /^\/products\/[A-Za-z0-9._\-/]{1,200}$/.test(v) || IMAGE_URL_RE.test(v) || /^https:\/\/\S{4,480}$/.test(v), {
     message: "Entrez un chemin comme /products/nom.webp ou un lien https://",
   }),
   extra_images: z
@@ -42,7 +43,7 @@ const schema = z.object({
     .transform((v) => [...new Set(v.split(/\r?\n/).map((l) => l.trim()).filter(Boolean))])
     .pipe(
       z
-        .array(z.string().refine((u) => /^\/products\/[A-Za-z0-9._\-/]{1,200}$/.test(u) || /^https:\/\/\S{4,480}$/.test(u), {
+        .array(z.string().refine((u) => /^\/products\/[A-Za-z0-9._\-/]{1,200}$/.test(u) || IMAGE_URL_RE.test(u) || /^https:\/\/\S{4,480}$/.test(u), {
           message: "Chaque ligne doit être un chemin /products/nom.webp ou un lien https://",
         }))
         .max(5, "5 photos supplémentaires maximum"),

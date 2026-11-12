@@ -117,3 +117,12 @@ CREATE TABLE site_settings (
   key TEXT PRIMARY KEY,
   value TEXT NOT NULL
 );
+
+-- Photos envoyées depuis le tableau de bord (WebP redimensionné, stocké en base64).
+CREATE TABLE IF NOT EXISTS images (
+  id TEXT PRIMARY KEY,
+  mime TEXT NOT NULL DEFAULT 'image/webp',
+  data_b64 TEXT NOT NULL,
+  bytes INT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
